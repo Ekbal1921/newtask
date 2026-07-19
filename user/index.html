@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Mega Task BD - Home</title>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom Style -->
+    <link rel="stylesheet" href="css/style.css">
+    <!-- Telegram WebApp SDK -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+</head>
+<body>
+
+    <!-- Connection Error Overlay -->
+    <div id="connection-overlay" class="connection-overlay">
+        <div class="connection-icon"><i class="fa-solid fa-wifi"></i></div>
+        <h2>No Internet Connection</h2>
+        <p>Please check your connection and try again.</p>
+    </div>
+
+    <!-- Pull to Refresh Indicator -->
+    <div id="ptr-indicator">
+        <div class="spinner"></div>
+        <span>Release to refresh...</span>
+    </div>
+
+    <!-- Global Toast Container -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <!-- Main Container -->
+    <div class="app-container" id="home-view">
+        
+        <!-- Profile Header -->
+        <header class="profile-header">
+            <div class="profile-info">
+                <img id="user-avatar" src="https://placekitten.com/100/100" alt="Avatar" class="profile-photo">
+                <div>
+                    <h2 id="user-name" class="profile-name">Loading...</h2>
+                    <span id="user-handle" class="profile-username">@loading</span>
+                </div>
+            </div>
+            <div class="notification-bell" id="bell-btn">
+                <i class="fa-regular fa-bell"></i>
+                <div class="notification-badge" id="bell-badge" style="display:none;"></div>
+            </div>
+        </header>
+
+        <!-- Balance Card -->
+        <section class="balance-card">
+            <div class="balance-label">Available Balance</div>
+            <div class="balance-value-container">
+                <span class="balance-value" id="user-coins">0</span>
+                <span class="balance-symbol">Coins</span>
+            </div>
+            <div class="balance-rate" id="conversion-rate">
+                Loading conversion rate...
+            </div>
+        </section>
+
+        <!-- Banner Slider -->
+        <section class="banner-container" id="banner-slider">
+            <!-- Dynamic Banners will render here -->
+            <div class="skeleton-card" style="height:100%;"></div>
+            <div class="banner-dots" id="banner-dots"></div>
+        </section>
+
+        <!-- Notice Board -->
+        <section class="notice-bar" id="notice-container">
+            <span class="notice-label">NOTICE</span>
+            <div class="notice-text">
+                <span class="notice-marquee" id="notice-text">Connecting to server... Please wait.</span>
+            </div>
+        </section>
+
+        <!-- Quick Links -->
+        <section class="quick-actions">
+            <a href="#" id="btn-how-to" class="action-card">
+                <span class="action-icon" style="color: #ff1744;"><i class="fa-brands fa-youtube"></i></span>
+                <span>How to Work</span>
+            </a>
+            <a href="#" id="btn-channel" target="_blank" class="action-card">
+                <span class="action-icon" style="color: #00e5ff;"><i class="fa-brands fa-telegram"></i></span>
+                <span>Payment Channel</span>
+            </a>
+        </section>
+
+        <!-- Daily Tasks Section -->
+        <h3 class="section-header">Daily Tasks</h3>
+        <section class="card-list" id="tasks-list">
+            <!-- Premium Tasks Link -->
+            <a href="task.html" class="glass-card">
+                <div class="card-left">
+                    <div class="card-badge-icon">
+                        <i class="fa-solid fa-gem"></i>
+                    </div>
+                    <div>
+                        <h4 class="card-title">Today's Premium Tasks</h4>
+                        <span class="card-desc" id="premium-tasks-count">Load available tasks</span>
+                    </div>
+                </div>
+                <div class="card-arrow">
+                    <i class="fa-solid fa-chevron-right"></i>
+                </div>
+            </a>
+
+            <!-- Daily Checking Task -->
+            <div class="glass-card" id="daily-check-card" style="cursor: pointer;">
+                <div class="card-left">
+                    <div class="card-badge-icon" style="background: rgba(0, 229, 255, 0.1); border-color: rgba(0, 229, 255, 0.2); color: var(--accent);">
+                        <i class="fa-solid fa-calendar-check"></i>
+                    </div>
+                    <div>
+                        <h4 class="card-title">Daily Checking Link</h4>
+                        <span class="card-desc" id="daily-check-desc">Click to claim daily reward</span>
+                    </div>
+                </div>
+                <div class="card-arrow" id="daily-check-status-icon">
+                    <i class="fa-solid fa-link"></i>
+                </div>
+            </div>
+        </section>
+        
+    </div>
+
+    <!-- Bottom Navigation Bar -->
+    <nav class="bottom-nav">
+        <a href="index.html" class="nav-item active">
+            <i class="fa-solid fa-house"></i>
+            <span>Home</span>
+        </a>
+        <a href="refer.html" class="nav-item">
+            <i class="fa-solid fa-user-group"></i>
+            <span>Refer</span>
+        </a>
+        <a href="wallet.html" class="nav-item">
+            <i class="fa-solid fa-wallet"></i>
+            <span>Wallet</span>
+        </a>
+    </nav>
+
+    <!-- How to Work Video Modal -->
+    <div id="video-modal" class="modal-overlay">
+        <div class="modal-content">
+            <h3 class="modal-title">How To Work</h3>
+            <p class="modal-desc" style="font-size: 13px;">Watch the tutorial video to learn how to complete tasks properly and earn rewards.</p>
+            <div id="video-frame-container" style="width: 100%; height: 180px; border-radius: 12px; overflow: hidden; margin-bottom: 16px; background:#000;">
+                <!-- Embedded Video -->
+            </div>
+            <button class="btn-secondary" id="close-video-btn">Close Tutorial</button>
+        </div>
+    </div>
+
+    <!-- Daily Claim Ad Countdown Modal -->
+    <div id="daily-claim-modal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="ad-timer-ring">
+                <svg class="ad-timer-svg">
+                    <circle class="ad-timer-circle-bg" cx="45" cy="45" r="40"></circle>
+                    <circle class="ad-timer-circle" id="daily-timer-circle" cx="45" cy="45" r="40"></circle>
+                </svg>
+                <div class="ad-timer-text" id="daily-timer-text">15</div>
+            </div>
+            <h3 class="modal-title">Daily Check-In</h3>
+            <p class="modal-desc">Stay on the checking website for <span id="daily-countdown-val">15</span> seconds to claim your daily reward.</p>
+            <button class="btn-premium" id="btn-claim-daily" disabled>Claim Reward</button>
+        </div>
+    </div>
+
+    <!-- Script Imports -->
+    <script type="module">
+        import { db, doc, getDoc, updateDoc, writeBatch, increment, serverTimestamp } from "./js/firebase.js";
+        import { state, syncUserSession, setupNotificationsListener, showToast, initPullToRefresh, animateCounter } from "./js/app.js";
+
+        // Global Elements
+        const userAvatar = document.getElementById("user-avatar");
+        const userName = document.getElementById("user-name");
+        const userHandle = document.getElementById("user-handle");
+        const userCoins = document.getElementById("user-coins");
+        const conversionRate = document.getElementById("conversion-rate");
+        const noticeText = document.getElementById("notice-text");
+        const premiumCount = document.getElementById("premium-tasks-count");
+        
+        // Navigation Buttons
+        const btnHowTo = document.getElementById("btn-how-to");
+        const btnChannel = document.getElementById("btn-channel");
+        
+        // Modals
+        const videoModal = document.getElementById("video-modal");
+        const closeVideoBtn = document.getElementById("close-video-btn");
+        const dailyClaimModal = document.getElementById("daily-claim-modal");
+        const btnClaimDaily = document.getElementById("btn-claim-daily");
+        const dailyCheckCard = document.getElementById("daily-check-card");
+        const dailyCheckDesc = document.getElementById("daily-check-desc");
+        const dailyCheckIcon = document.getElementById("daily-check-status-icon");
+
+        // Sync session and bind UI
+        syncUserSession(async () => {
+            // Update User Profile UI
+            if (state.userDoc.photo) {
+                userAvatar.src = state.userDoc.photo;
+            } else {
+                userAvatar.src = `https://api.dicebear.com/7.x/bottts/svg?seed=${state.userDoc.telegramId}`;
+            }
+            userName.textContent = state.userDoc.fullname;
+            userHandle.textContent = state.userDoc.username ? `@${state.userDoc.username}` : `@id_${state.userDoc.telegramId}`;
+            
+            // Animate coin counter
+            animateCounter("user-coins", state.userDoc.coins, 1000);
+            
+            // Render settings and system policies
+            if (state.settings) {
+                noticeText.textContent = state.settings.notice || "Welcome to Mega Task BD! Join our official channel for withdrawal proofs.";
+                conversionRate.innerHTML = `<i class="fa-solid fa-circle-info"></i> Coin conversion rate: <strong>${state.settings.coinConversion || "1000 Coins = 10 BDT"}</strong> (Min: ${state.settings.minWithdraw || 1000} Coins)`;
+                btnChannel.href = state.settings.telegramChannel || "https://t.me/";
+            }
+            
+            // Setup active banner slider
+            setupBanners();
+            
+            // Listen for global popups
+            setupNotificationsListener();
+
+            // Check Premium Tasks Count
+            fetchPremiumTasksCount();
+
+            // Bind Daily Check State
+            updateDailyCheckUI();
+        });
+
+        // Pull to refresh callback
+        initPullToRefresh(async () => {
+            // Re-sync session data
+            syncUserSession(() => {
+                showToast("Application data updated", "success");
+            });
+        });
+
+        // Banner Slider Logic
+        let activeSlideIndex = 0;
+        let slideTimer = null;
+        async function setupBanners() {
+            const bannerContainer = document.getElementById("banner-slider");
+            const dotsContainer = document.getElementById("banner-dots");
+            
+            try {
+                // Fetch enabled banners from Firestore
+                const { getDocs, collection, query, where, orderBy } = await import("./js/firebase.js");
+                const q = query(collection(db, "banners"), where("enabled", "==", true), orderBy("order", "asc"));
+                const snap = await getDocs(q);
+                
+                bannerContainer.innerHTML = ""; // Clear loader
+                dotsContainer.innerHTML = "";
+                
+                const banners = [];
+                snap.forEach(doc => banners.push({ id: doc.id, ...doc.data() }));
+                
+                if (banners.length === 0) {
+                    // Fallback default banner
+                    bannerContainer.innerHTML = `
+                        <div class="banner-slide active" style="background-image: linear-gradient(135deg, #1a1c3e, #312b6e);">
+                            <div class="banner-overlay"></div>
+                            <div style="z-index: 1; padding: 12px;">
+                                <h3 style="font-size:15px; font-weight:700;">Welcome to Mega Task BD!</h3>
+                                <p style="font-size:11px; color:var(--text-secondary);">Start completing daily tasks to earn coins.</p>
+                            </div>
+                        </div>
+                    `;
+                    return;
+                }
+
+                banners.forEach((banner, index) => {
+                    const slide = document.createElement("a");
+                    slide.className = `banner-slide ${index === 0 ? 'active' : ''}`;
+                    slide.href = banner.redirectUrl || "#";
+                    if (banner.redirectUrl) slide.target = "_blank";
+                    slide.style.backgroundImage = `url(${banner.imageUrl})`;
+                    slide.innerHTML = `<div class="banner-overlay"></div>`;
+                    
+                    bannerContainer.appendChild(slide);
+
+                    const dot = document.createElement("div");
+                    dot.className = `banner-dot ${index === 0 ? 'active' : ''}`;
+                    dotsContainer.appendChild(dot);
+                });
+
+                bannerContainer.appendChild(dotsContainer); // Append dots wrapper
+
+                // Start Slide Rotation
+                if (banners.length > 1) {
+                    clearInterval(slideTimer);
+                    slideTimer = setInterval(() => {
+                        const slides = document.querySelectorAll(".banner-slide");
+                        const dots = document.querySelectorAll(".banner-dot");
+                        if (!slides.length) return;
+
+                        slides[activeSlideIndex].classList.remove("active");
+                        dots[activeSlideIndex].classList.remove("active");
+
+                        activeSlideIndex = (activeSlideIndex + 1) % slides.length;
+
+                        slides[activeSlideIndex].classList.add("active");
+                        dots[activeSlideIndex].classList.add("active");
+                    }, (banners[0].duration || 5) * 1000);
+                }
+
+            } catch (err) {
+                console.error("Error loading banners:", err);
+            }
+        }
+
+        // How to Work Tutorial Modal
+        btnHowTo.addEventListener("click", (e) => {
+            e.preventDefault();
+            const frameContainer = document.getElementById("video-frame-container");
+            const videoUrl = state.settings?.howToWorkVideo || "https://www.youtube.com/embed/dQw4w9WgXcQ"; // fallback rickroll
+            
+            // Format embedded URL if needed
+            let embedUrl = videoUrl;
+            if (videoUrl.includes("watch?v=")) {
+                embedUrl = videoUrl.replace("watch?v=", "embed/");
+            }
+            
+            frameContainer.innerHTML = `
+                <iframe width="100%" height="100%" src="${embedUrl}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            `;
+            videoModal.classList.add("active");
+        });
+
+        closeVideoBtn.addEventListener("click", () => {
+            const frameContainer = document.getElementById("video-frame-container");
+            frameContainer.innerHTML = ""; // Stop playing
+            videoModal.classList.remove("active");
+        });
+
+        // Premium Tasks Counter
+        async function fetchPremiumTasksCount() {
+            try {
+                const { getDocs, collection, query, where } = await import("./js/firebase.js");
+                const q = query(collection(db, "tasks"), where("enabled", "==", true));
+                const snap = await getDocs(q);
+                
+                let count = 0;
+                snap.forEach(() => count++);
+                premiumCount.textContent = `${count} tasks available today`;
+            } catch (err) {
+                premiumCount.textContent = "Click to view premium tasks";
+            }
+        }
+
+        // Daily Check-In Claim Logic
+        function updateDailyCheckUI() {
+            const lastClaim = state.userDoc.dailyCompleted; // Firestore Timestamp
+            let isClaimed = false;
+            
+            if (lastClaim) {
+                const lastDate = lastClaim.toDate();
+                const now = new Date();
+                
+                // Compare calendar day
+                if (lastDate.getFullYear() === now.getFullYear() &&
+                    lastDate.getMonth() === now.getMonth() &&
+                    lastDate.getDate() === now.getDate()) {
+                    isClaimed = true;
+                }
+            }
+
+            if (isClaimed) {
+                dailyCheckDesc.textContent = "Cooldown active. Returns tomorrow.";
+                dailyCheckIcon.innerHTML = `<span class="badge badge-pending"><i class="fa-solid fa-clock"></i> Claimed</span>`;
+                dailyCheckCard.style.pointerEvents = "none";
+            } else {
+                dailyCheckDesc.textContent = "Click to open SmartLink & claim coins";
+                dailyCheckIcon.innerHTML = `<i class="fa-solid fa-link" style="color:var(--accent);"></i>`;
+                dailyCheckCard.style.pointerEvents = "auto";
+            }
+        }
+
+        let dailyClaimTimer = null;
+        let isDailyCheckInProgress = false;
+
+        dailyCheckCard.addEventListener("click", async () => {
+            if (isDailyCheckInProgress) return;
+            
+            const smartLink = state.settings?.dailySmartLink || "https://google.com";
+            const rewardCoins = state.settings?.dailyReward || 25;
+            
+            // Open SmartLink in new tab
+            window.open(smartLink, "_blank");
+            isDailyCheckInProgress = true;
+            
+            // Launch Interstitial Ad countdown popup in app
+            dailyClaimModal.classList.add("active");
+            
+            let timeLeft = 15;
+            const timerCircle = document.getElementById("daily-timer-circle");
+            const timerText = document.getElementById("daily-timer-text");
+            const countdownVal = document.getElementById("daily-countdown-val");
+            
+            timerText.textContent = timeLeft;
+            countdownVal.textContent = timeLeft;
+            
+            // Reset stroke
+            timerCircle.style.strokeDashoffset = "0";
+            const totalDash = 251.2;
+            
+            clearInterval(dailyClaimTimer);
+            dailyClaimTimer = setInterval(async () => {
+                timeLeft--;
+                timerText.textContent = timeLeft;
+                countdownVal.textContent = timeLeft;
+                
+                // Animate circle ring
+                const offset = totalDash - (totalDash * (15 - timeLeft) / 15);
+                timerCircle.style.strokeDashoffset = offset;
+                
+                if (timeLeft <= 0) {
+                    clearInterval(dailyClaimTimer);
+                    btnClaimDaily.disabled = false;
+                    btnClaimDaily.textContent = `Claim ${rewardCoins} Coins`;
+                }
+            }, 1000);
+        });
+
+        btnClaimDaily.addEventListener("click", async () => {
+            btnClaimDaily.disabled = true;
+            btnClaimDaily.textContent = "Processing...";
+            
+            const telegramId = String(state.tgUser.id);
+            const userRef = doc(db, "users", telegramId);
+            const rewardCoins = state.settings?.dailyReward || 25;
+            
+            try {
+                // Apply update securely using transaction
+                const { runTransaction } = await import("./js/firebase.js");
+                await runTransaction(db, async (transaction) => {
+                    const userSnap = await transaction.get(userRef);
+                    if (!userSnap.exists()) throw "User not found";
+                    
+                    const userData = userSnap.data();
+                    
+                    // Verify double claim in transaction
+                    const lastClaim = userData.dailyCompleted;
+                    let isAlreadyClaimed = false;
+                    if (lastClaim) {
+                        const lastDate = lastClaim.toDate();
+                        const now = new Date();
+                        if (lastDate.getFullYear() === now.getFullYear() &&
+                            lastDate.getMonth() === now.getMonth() &&
+                            lastDate.getDate() === now.getDate()) {
+                            isAlreadyClaimed = true;
+                        }
+                    }
+                    
+                    if (isAlreadyClaimed) {
+                        throw "Reward already claimed today";
+                    }
+
+                    // Increment user coins & update dailyCompleted timestamp
+                    transaction.update(userRef, {
+                        coins: increment(rewardCoins),
+                        dailyCompleted: serverTimestamp()
+                    });
+
+                    // Add log to history collection
+                    const historyRef = doc(collection(db, "history"));
+                    transaction.set(historyRef, {
+                        telegramId: telegramId,
+                        type: "daily",
+                        referenceId: "daily_checkin",
+                        coins: rewardCoins,
+                        description: `Claimed Daily Checking Coins`,
+                        createdAt: serverTimestamp()
+                    });
+                });
+                
+                showToast(`Daily check-in rewarded: +${rewardCoins} coins!`, "success");
+                
+                // Hide modal and update locally
+                dailyClaimModal.classList.remove("active");
+                state.userDoc.coins += rewardCoins;
+                state.userDoc.dailyCompleted = new Date(); // Mock timestamp update
+                animateCounter("user-coins", state.userDoc.coins, 1000);
+                updateDailyCheckUI();
+                
+            } catch (err) {
+                console.error("Daily claim failed:", err);
+                showToast(typeof err === "string" ? err : "Claim verification failed", "error");
+                dailyClaimModal.classList.remove("active");
+            } finally {
+                isDailyCheckInProgress = false;
+            }
+        });
+    </script>
+</body>
+</html>

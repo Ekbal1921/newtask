@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Mega Task BD - Premium Tasks</title>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom Style -->
+    <link rel="stylesheet" href="css/style.css">
+    <!-- Telegram WebApp SDK -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+</head>
+<body>
+
+    <!-- Connection Error Overlay -->
+    <div id="connection-overlay" class="connection-overlay">
+        <div class="connection-icon"><i class="fa-solid fa-wifi"></i></div>
+        <h2>No Internet Connection</h2>
+        <p>Please check your connection and try again.</p>
+    </div>
+
+    <!-- Pull to Refresh Indicator -->
+    <div id="ptr-indicator">
+        <div class="spinner"></div>
+        <span>Release to refresh...</span>
+    </div>
+
+    <!-- Global Toast Container -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <!-- Main Container -->
+    <div class="app-container">
+        
+        <!-- Header -->
+        <header class="profile-header" style="margin-bottom: 12px;">
+            <div style="display:flex; align-items:center; gap:12px;">
+                <a href="index.html" class="notification-bell" style="text-decoration:none;" id="btn-back">
+                    <i class="fa-solid fa-arrow-left"></i>
+                </a>
+                <div>
+                    <h2 class="profile-name">Premium Tasks</h2>
+                    <span class="profile-username" id="task-page-sub">Complete tasks to earn coins</span>
+                </div>
+            </div>
+            <div class="notification-bell" style="width: auto; padding: 0 12px; border-radius: 15px;">
+                <span id="user-task-coins" style="font-weight:700; color:var(--primary);">0</span>
+                <span style="font-size:11px; margin-left:4px; color:var(--text-secondary);">Coins</span>
+            </div>
+        </header>
+
+        <!-- Skeleton Loader -->
+        <section class="card-list" id="task-skeleton">
+            <div class="skeleton-card"></div>
+            <div class="skeleton-card"></div>
+            <div class="skeleton-card"></div>
+        </section>
+
+        <!-- Task List Container -->
+        <section class="card-list" id="task-list-container" style="display:none; flex: 1;">
+            <!-- Render tasks dynamically -->
+        </section>
+
+        <!-- Empty State -->
+        <div class="empty-state" id="task-empty-state" style="display:none; flex: 1;">
+            <div class="empty-icon"><i class="fa-solid fa-hourglass-empty"></i></div>
+            <h4>No Tasks Available</h4>
+            <p class="empty-text">No active premium tasks found. Check back later!</p>
+        </div>
+
+    </div>
+
+    <!-- Bottom Navigation Bar -->
+    <nav class="bottom-nav">
+        <a href="index.html" class="nav-item">
+            <i class="fa-solid fa-house"></i>
+            <span>Home</span>
+        </a>
+        <a href="refer.html" class="nav-item">
+            <i class="fa-solid fa-user-group"></i>
+            <span>Refer</span>
+        </a>
+        <a href="wallet.html" class="nav-item">
+            <i class="fa-solid fa-wallet"></i>
+            <span>Wallet</span>
+        </a>
+    </nav>
+
+    <!-- Interstitial Mock Ad / Task timer Modal -->
+    <div id="task-ad-modal" class="modal-overlay">
+        <div class="modal-content">
+            <div class="ad-timer-ring">
+                <svg class="ad-timer-svg">
+                    <circle class="ad-timer-circle-bg" cx="45" cy="45" r="40"></circle>
+                    <circle class="ad-timer-circle" id="task-timer-circle" cx="45" cy="45" r="40"></circle>
+                </svg>
+                <div class="ad-timer-text" id="task-timer-text">0</div>
+            </div>
+            
+            <div id="modal-ad-phase">
+                <h3 class="modal-title">Loading Sponsor Ad</h3>
+                <p class="modal-desc" style="font-size: 13px;">Preparing ad content. Do not close or press back.</p>
+                <span class="badge badge-pending" style="padding:6px 12px; margin-bottom:15px;">Ad Zone ID: <strong id="modal-zone-id">...</strong></span>
+            </div>
+
+            <div id="modal-work-phase" style="display:none;">
+                <h3 class="modal-title">Task Timer</h3>
+                <p class="modal-desc" style="font-size: 13px;">Browse the landing page for <span id="modal-countdown-val">0</span> seconds to receive rewards.</p>
+                <button class="btn-premium" id="btn-claim-task" disabled>Claim Reward</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Script Imports -->
+    <script type="module" src="js/task.js"></script>
+</body>
+</html>

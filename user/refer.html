@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Mega Task BD - Refer & Earn</title>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom Style -->
+    <link rel="stylesheet" href="css/style.css">
+    <!-- Telegram WebApp SDK -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+</head>
+<body>
+
+    <!-- Connection Error Overlay -->
+    <div id="connection-overlay" class="connection-overlay">
+        <div class="connection-icon"><i class="fa-solid fa-wifi"></i></div>
+        <h2>No Internet Connection</h2>
+        <p>Please check your connection and try again.</p>
+    </div>
+
+    <!-- Pull to Refresh Indicator -->
+    <div id="ptr-indicator">
+        <div class="spinner"></div>
+        <span>Release to refresh...</span>
+    </div>
+
+    <!-- Global Toast Container -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <!-- Main Container -->
+    <div class="app-container">
+        
+        <!-- Header -->
+        <header class="profile-header" style="margin-bottom: 12px;">
+            <div style="display:flex; align-items:center; gap:12px;">
+                <a href="index.html" class="notification-bell" style="text-decoration:none;" id="btn-back">
+                    <i class="fa-solid fa-arrow-left"></i>
+                </a>
+                <div>
+                    <h2 class="profile-name">Refer & Earn</h2>
+                    <span class="profile-username">Invite friends & earn bonus coins</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Referral Box -->
+        <section class="glass-card" style="flex-direction:column; padding: 24px; text-align:center; gap:16px; margin-bottom:20px;">
+            <div style="font-size:44px; color:var(--primary); animation: pulse 2s infinite;"><i class="fa-solid fa-user-plus"></i></div>
+            
+            <div>
+                <h3 style="font-size:17px; font-weight:700; margin-bottom:6px;">আপনার রেফারেল লিংক</h3>
+                <p style="font-size:12px; color:var(--warning);" id="referral-bonus-text">প্রতি রেফারে পাবেন: 10 কয়েন</p>
+            </div>
+
+            <div class="referral-box" style="width: 100%;">
+                <span class="referral-url" id="referral-link-val">https://t.me/loading_bot?startapp=00000</span>
+            </div>
+
+            <button class="btn-premium" id="btn-copy-link">
+                Copy Link <i class="fa-regular fa-copy"></i>
+            </button>
+        </section>
+
+        <!-- Stats Grid -->
+        <section class="quick-actions" style="margin-bottom: 20px;">
+            <div class="glass-card" style="flex-direction:column; align-items:center; justify-content:center; padding:16px; gap:8px;">
+                <span style="font-size:20px; color:var(--accent);"><i class="fa-solid fa-people-group"></i></span>
+                <h3 id="refer-total-count" style="font-size:22px; font-weight:800;">0</h3>
+                <span style="font-size:11px; text-transform:uppercase; color:var(--text-secondary); font-weight:500;">Total Refers</span>
+            </div>
+            
+            <div class="glass-card" style="flex-direction:column; align-items:center; justify-content:center; padding:16px; gap:8px;">
+                <span style="font-size:20px; color:var(--success);"><i class="fa-solid fa-coins"></i></span>
+                <h3 id="refer-total-coins" style="font-size:22px; font-weight:800;">0</h3>
+                <span style="font-size:11px; text-transform:uppercase; color:var(--text-secondary); font-weight:500;">Earned Coins</span>
+            </div>
+        </section>
+
+        <!-- Referral Rules Notice -->
+        <section class="glass-card" style="flex-direction:column; align-items:stretch; gap:8px; margin-bottom:20px; background:rgba(0, 229, 255, 0.01); border-color:rgba(0, 229, 255, 0.08);">
+            <h4 style="font-size:13px; font-weight:600; color:var(--accent); text-transform:uppercase; letter-spacing:0.05em;">Referral Notice</h4>
+            <p id="referral-notice-text" style="font-size:12px; color:var(--text-secondary); line-height:1.5;">
+                Loading instructions...
+            </p>
+        </section>
+        
+    </div>
+
+    <!-- Bottom Navigation Bar -->
+    <nav class="bottom-nav">
+        <a href="index.html" class="nav-item">
+            <i class="fa-solid fa-house"></i>
+            <span>Home</span>
+        </a>
+        <a href="refer.html" class="nav-item active">
+            <i class="fa-solid fa-user-group"></i>
+            <span>Refer</span>
+        </a>
+        <a href="wallet.html" class="nav-item">
+            <i class="fa-solid fa-wallet"></i>
+            <span>Wallet</span>
+        </a>
+    </nav>
+
+    <!-- Script Imports -->
+    <script type="module" src="js/refer.js"></script>
+</body>
+</html>
